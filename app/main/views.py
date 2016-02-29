@@ -2,9 +2,8 @@ import time
 from threading import Thread
 from flask import render_template
 from app.main import main
+from .. import socketio
 
-# Is this correct???
-from manage import socketio
 
 thread = None
 
@@ -15,15 +14,13 @@ def background_thread():
         time.sleep(1)
         count += 1
         print(count)
-        # Do not work!!!
-        socketio.emit('my response', {'data': 'Thread', 'count': count},
+        socketio.emit('counter', {'data': 'Thread', 'count': count},
                       namespace='/test')
 
 
-# Do not work!!!
-@socketio.on('connect', namespace='/test')
-def test_connect():
-    print("Connected (msg from views.py)")
+@socketio.on('echo', namespace='/test')
+def echo(json):
+     print('received json: ' + str(json))
 
 
 @main.route('/')
